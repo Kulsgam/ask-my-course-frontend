@@ -3,6 +3,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
