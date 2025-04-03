@@ -8,6 +8,10 @@ body {
   min-height: 100svh;
 }
 
+button {
+    @apply cursor-pointer;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
