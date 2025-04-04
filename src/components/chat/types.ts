@@ -1,10 +1,12 @@
-export interface Message {
+import { Role } from "@/state";
+
+export interface IMessage {
   id: string;
   content: string;
-  role: "user" | "assistant";
+  role: Role;
   timestamp: Date;
 }
 
-export interface ChatMessageProps {
-  message: Message;
+export interface IChatMessageProps {
+  message: IMessage;
 }

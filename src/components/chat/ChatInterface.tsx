@@ -5,37 +5,23 @@ import { Input } from "@/components/ui/input";
 import ChatSidebar from "./ChatSidebar";
 import ChatHeader from "./ChatHeader";
 import ChatMessage from "./ChatMessage";
-import { Message } from "@/components/chat/types";
+import { IMessage } from "@/components/chat/types";
+import { Role } from "@/state";
 
 // Sample chat history data
-const initialMessages: Message[] = [
-  {
-    id: "1",
-    content: "Hello! How can I help you with your course today?",
-    role: "assistant",
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-  },
-  {
-    id: "2",
-    content: "I'm having trouble with the assignment in module 3.",
-    role: "user",
-    timestamp: new Date(Date.now() - 1000 * 60 * 4),
-  },
-  {
-    id: "3",
-    content:
-      "I'd be happy to help with that. What specific part of the assignment are you struggling with?",
-    role: "assistant",
-    timestamp: new Date(Date.now() - 1000 * 60 * 3),
-  },
-];
 
-function ChatMessages({ messages }: { messages: Message[] }) {
+function ChatMessages({ messages }: { messages: IMessage[] | null }) {
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
-      {messages.map((message) => (
-        <ChatMessage key={message.id} message={message} />
-      ))}
+      {messages ? (
+        messages.map((message) => (
+          <ChatMessage key={message.id} message={message} />
+        ))
+      ) : (
+        <div className="flex h-full items-center justify-center text-5xl text-gray-500">
+          How can I help? 😊
+        </div>
+      )}
     </div>
   );
 }
@@ -71,32 +57,39 @@ function ChatInput({
   );
 }
 
-export default function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+export default function ChatInterface({
+  userMessages,
+}: {
+  userMessages: IMessage[] | null;
+}) {
+  const [messages, setMessages] = useState<IMessage[] | null>(userMessages);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleSendMessage = (inputValue: string) => {
     if (!inputValue.trim()) return;
 
     // Add user message
-    const newUserMessage: Message = {
+    const newUserMessage: IMessage = {
       id: Date.now().toString(),
       content: inputValue,
-      role: "user",
+      role: Role.user,
       timestamp: new Date(),
     };
 
-    setMessages([...messages, newUserMessage]);
+    setMessages([...(messages ?? []), newUserMessage]);
 
     // Simulate assistant response
     setTimeout(() => {
-      const assistantMessage: Message = {
+      const assistantMessage: IMessage = {
         id: (Date.now() + 1).toString(),
         content: "I'm processing your question. Let me help you with that.",
-        role: "assistant",
+        role: Role.assistant,
         timestamp: new Date(),
       };
-      setMessages((prev: Message[]) => [...prev, assistantMessage]);
+      setMessages((prev: IMessage[] | null) => [
+        ...(prev ?? []),
+        assistantMessage,
+      ]);
     }, 1000);
   };
 

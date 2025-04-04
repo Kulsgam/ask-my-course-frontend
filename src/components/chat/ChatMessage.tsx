@@ -1,9 +1,10 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Bot, User } from "lucide-react";
-import { ChatMessageProps } from "@/components/chat/types";
+import { IChatMessageProps } from "@/components/chat/types";
+import { Role } from "@/state";
 
-export default function ChatMessage({ message }: ChatMessageProps) {
-  const isUser = message.role === "user";
+export default function ChatMessage({ message }: IChatMessageProps) {
+  const isUser = message.role === Role.user;
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
