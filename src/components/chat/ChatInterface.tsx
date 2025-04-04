@@ -6,7 +6,6 @@ import ChatSidebar from "./ChatSidebar";
 import ChatHeader from "./ChatHeader";
 import ChatMessage from "./ChatMessage";
 import { IMessage } from "@/components/chat/types";
-import { Role } from "@/state";
 
 // Sample chat history data
 
@@ -18,7 +17,7 @@ function ChatMessages({ messages }: { messages: IMessage[] | null }) {
           <ChatMessage key={message.id} message={message} />
         ))
       ) : (
-        <div className="flex h-full items-center justify-center text-5xl text-gray-500">
+        <div className="flex h-full items-center justify-center text-5xl text-gray-500 select-none">
           How can I help? 😊
         </div>
       )}
@@ -42,7 +41,7 @@ function ChatInput({
           setInputValue("");
         }}
         className="flex space-x-2"
-          >
+      >
         <Textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -65,40 +64,15 @@ function ChatInput({
 }
 
 export default function ChatInterface({
-  userMessages,
+  messages,
+  courseName,
+  handleSendMessage,
 }: {
-  userMessages: IMessage[] | null;
+  messages: IMessage[] | null;
+  courseName: string | null;
+  handleSendMessage: (inputValue: string) => void;
 }) {
-  const [messages, setMessages] = useState<IMessage[] | null>(userMessages);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const handleSendMessage = (inputValue: string) => {
-    if (!inputValue.trim()) return;
-
-    // Add user message
-    const newUserMessage: IMessage = {
-      id: Date.now().toString(),
-      content: inputValue,
-      role: Role.user,
-      timestamp: new Date(),
-    };
-
-    setMessages([...(messages ?? []), newUserMessage]);
-
-    // Simulate assistant response
-    setTimeout(() => {
-      const assistantMessage: IMessage = {
-        id: (Date.now() + 1).toString(),
-        content: "I'm processing your question. Let me help you with that.",
-        role: Role.assistant,
-        timestamp: new Date(),
-      };
-      setMessages((prev: IMessage[] | null) => [
-        ...(prev ?? []),
-        assistantMessage,
-      ]);
-    }, 1000);
-  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -108,7 +82,7 @@ export default function ChatInterface({
     <>
       <ChatSidebar isOpen={isSidebarOpen} />
       <div className="flex h-full flex-1 flex-col">
-        <ChatHeader toggleSidebar={toggleSidebar} />
+        <ChatHeader courseName={courseName} toggleSidebar={toggleSidebar} />
         <ChatMessages messages={messages} />
         <ChatInput handleSendMessage={handleSendMessage} />
       </div>

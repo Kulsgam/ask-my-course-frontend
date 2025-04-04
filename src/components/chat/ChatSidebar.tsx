@@ -9,67 +9,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Sample course data
-const courses = [
-  { id: "1", name: "Introduction to Programming" },
-  { id: "2", name: "Data Structures and Algorithms" },
-  { id: "3", name: "Web Development Fundamentals" },
-  { id: "4", name: "Machine Learning Basics" },
-];
-
-// Sample chat history data
-const chatHistory = [
-  {
-    id: "1",
-    title: "Assignment Help",
-    preview: "I need help with my assignment...",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 days ago
-    unread: false,
-  },
-  {
-    id: "2",
-    title: "Project Questions",
-    preview: "How do I start the final project?",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
-    unread: true,
-  },
-  {
-    id: "3",
-    title: "Exam Preparation",
-    preview: "What topics should I focus on?",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-    unread: true,
-  },
-];
+import { useAtom } from "jotai";
+import { selectedCourseAtom } from "@/state";
+import { userInfoAtom } from "@/state";
 
 interface ChatSidebarProps {
   isOpen: boolean;
 }
 
 export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
-  const [selectedCourse, setSelectedCourse] = useState<string>("1");
+  const [userInfo] = useAtom(userInfoAtom);
+  const courses = userInfo?.courses ?? [];
+  const chatHistory = userInfo?.chatHistory ?? [];
+  const [selectedCourse, setSelectedCourse] = useAtom(selectedCourseAtom);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const formatDate = (date: Date) => {
-    const now = new Date();
-    const diffDays = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
-    );
-
-    if (diffDays === 0) {
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } else if (diffDays === 1) {
-      return "Yesterday";
-    } else if (diffDays < 7) {
-      return date.toLocaleDateString([], { weekday: "short" });
-    } else {
-      return date.toLocaleDateString([], { month: "short", day: "numeric" });
-    }
-  };
 
   return (
     <div
@@ -77,13 +30,30 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
     >
       <div className="space-y-4 p-4">
         <div className="space-y-2">
-          <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+          <Select
+            value={selectedCourse?.name ?? "__none__"}
+            onValueChange={(value) => {
+              if (value === "__none__") {
+                setSelectedCourse(null);
+              } else {
+                const course = courses.find((c) => c.name === value) ?? null;
+                setSelectedCourse(course);
+              }
+            }}
+          >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a course" />
+              <SelectValue placeholder="Select a course"/>
             </SelectTrigger>
             <SelectContent>
+              <SelectItem
+                className="text-gray-400 italic hover:bg-gray-100 dark:hover:bg-gray-800"
+                value="__none__"
+                key="__none__"
+              >
+                Select a course
+              </SelectItem>{" "}
               {courses.map((course) => (
-                <SelectItem key={course.id} value={course.id}>
+                <SelectItem key={course.id} value={course.name}>
                   {course.name}
                 </SelectItem>
               ))}
@@ -118,26 +88,20 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
             </Button>
           </div>
           <div className="space-y-1">
-            {chatHistory.map((chat) => (
+            {chatHistory.map((chat, idx) => (
               <Button
-                key={chat.id}
+                key={idx}
                 variant="ghost"
                 className="relative w-full justify-start font-normal"
               >
                 <div className="flex flex-col items-start text-left">
                   <div className="flex w-full justify-between">
-                    <span className="font-medium">{chat.title}</span>
-                    <span className="text-muted-foreground text-xs">
-                      {formatDate(chat.timestamp)}
-                    </span>
+                    <span className="font-medium">{chat.name}</span>
                   </div>
                   <span className="text-muted-foreground w-full truncate text-xs">
-                    {chat.preview}
+                    {chat.lastRole}: {chat.lastMessage}
                   </span>
                 </div>
-                {chat.unread && (
-                  <div className="bg-primary absolute top-1/2 right-2 h-2 w-2 -translate-y-1/2 rounded-full"></div>
-                )}
               </Button>
             ))}
           </div>

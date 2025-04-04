@@ -11,17 +11,21 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ChatHeaderProps {
+  courseName: string | null;
   toggleSidebar: () => void;
 }
 
-export default function ChatHeader({ toggleSidebar }: ChatHeaderProps) {
+export default function ChatHeader({
+  courseName,
+  toggleSidebar,
+}: ChatHeaderProps) {
   return (
     <header className="flex items-center justify-between border-b p-4">
       <div className="flex items-center">
         <Button variant="ghost" size="icon" onClick={toggleSidebar}>
           <Menu className="h-5 w-5" />
         </Button>
-        <h1 className="ml-4 font-medium">Introduction to Programming</h1>
+        <h1 className="ml-4 font-medium">{courseName ?? ""}</h1>
       </div>
 
       <DropdownMenu>
