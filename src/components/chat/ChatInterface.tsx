@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import ChatSidebar from "./ChatSidebar";
 import ChatHeader from "./ChatHeader";
 import ChatMessage from "./ChatMessage";
@@ -42,10 +42,17 @@ function ChatInput({
           setInputValue("");
         }}
         className="flex space-x-2"
-      >
-        <Input
+          >
+        <Textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage(inputValue);
+              setInputValue("");
+            }
+          }}
           placeholder="Type your message..."
           className="flex-1"
         />
