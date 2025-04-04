@@ -1,6 +1,10 @@
 import "./App.css";
-import { Button } from "@/components/ui/button";
+import ChatInterface from "@/components/chat";
 
 export default function App() {
-  return <Button>Click Me!</Button>;
+  return (
+    <div className="flex h-screen">
+      <ChatInterface />
+    </div>
+  );
 }

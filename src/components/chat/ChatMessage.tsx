@@ -1,0 +1,38 @@
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Bot, User } from "lucide-react";
+import { ChatMessageProps } from "@/components/chat/types";
+
+export default function ChatMessage({ message }: ChatMessageProps) {
+  const isUser = message.role === "user";
+
+  return (
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`flex max-w-[80%] gap-3 ${isUser ? "flex-row-reverse" : ""}`}
+      >
+        <Avatar className={isUser ? "bg-primary" : "bg-muted"}>
+          <AvatarFallback>
+            {isUser ? (
+              <User className="h-4 w-4" />
+            ) : (
+              <Bot className="h-4 w-4" />
+            )}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <div
+            className={`rounded-lg p-3 ${isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
+          >
+            {message.content}
+          </div>
+          <div className="text-muted-foreground mt-1 text-xs">
+            {message.timestamp.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
