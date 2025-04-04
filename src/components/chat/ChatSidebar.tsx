@@ -42,7 +42,7 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a course"/>
+              <SelectValue placeholder="Select a course" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem
@@ -92,11 +92,11 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
               <Button
                 key={idx}
                 variant="ghost"
-                className="relative w-full justify-start font-normal"
+                className="relative w-full justify-start overflow-hidden font-normal"
               >
-                <div className="flex flex-col items-start text-left">
-                  <div className="flex w-full justify-between">
-                    <span className="font-medium">{chat.name}</span>
+                <div className="flex w-full flex-col items-start overflow-hidden text-left">
+                  <div className="flex w-full justify-between overflow-hidden">
+                    <span className="truncate font-medium">{chat.name}</span>
                   </div>
                   <span className="text-muted-foreground w-full truncate text-xs">
                     {chat.lastRole}: {chat.lastMessage}
