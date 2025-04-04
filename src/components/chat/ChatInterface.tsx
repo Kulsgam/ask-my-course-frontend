@@ -40,7 +40,11 @@ function ChatMessages({ messages }: { messages: Message[] }) {
   );
 }
 
-function ChatInput({ handleSendMessage }: { handleSendMessage: () => void }) {
+function ChatInput({
+  handleSendMessage,
+}: {
+  handleSendMessage: (inputValue: string) => void;
+}) {
   const [inputValue, setInputValue] = useState("");
 
   return (
@@ -48,7 +52,8 @@ function ChatInput({ handleSendMessage }: { handleSendMessage: () => void }) {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleSendMessage();
+          handleSendMessage(inputValue);
+          setInputValue("");
         }}
         className="flex space-x-2"
       >
@@ -68,10 +73,9 @@ function ChatInput({ handleSendMessage }: { handleSendMessage: () => void }) {
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [inputValue, setInputValue] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (inputValue: string) => {
     if (!inputValue.trim()) return;
 
     // Add user message
@@ -83,7 +87,6 @@ export default function ChatInterface() {
     };
 
     setMessages([...messages, newUserMessage]);
-    setInputValue("");
 
     // Simulate assistant response
     setTimeout(() => {
