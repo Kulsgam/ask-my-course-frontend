@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,33 +15,30 @@ import {
 } from "@/components/ui/select";
 import { useAtom } from "jotai";
 import { userInfoAtom } from "@/state";
-// Sample chat history data
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover";
+// Sample chat history data
 
-function CourseSelector() {
+function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
   const [userInfo] = useAtom(userInfoAtom);
   const courses = userInfo?.courses ?? [];
   const [selectedCourse, setSelectedCourse] = useAtom(selectedCourseAtom);
+  const [showPopover, setShowPopover] = useState(false);
 
-  const isCourseSelected =
-    !!selectedCourse && selectedCourse.name !== "__none__";
+  const isCourseSelected = selectedCourse && selectedCourse.name !== "__none__";
 
-  const selectTrigger = (
-    <SelectTrigger className="w-full">
-      {!isCourseSelected ? (
-        <p className="text-gray-400 italic">Select a course</p>
-      ) : (
-        <p className="text-black dark:text-white">{selectedCourse.name}</p>
-      )}
-    </SelectTrigger>
-  );
+  useEffect(() => {
+    if (tryTrigger && !isCourseSelected) {
+      setShowPopover(true);
+    } else {
+      setShowPopover(false);
+    }
+  }, [tryTrigger, isCourseSelected]);
 
-  return (
+  const selectComponent = (
     <Select
       value={selectedCourse?.name ?? "__none__"}
       onValueChange={(value) => {
@@ -53,19 +50,13 @@ function CourseSelector() {
         }
       }}
     >
-      {isCourseSelected ? (
-        selectTrigger
-      ) : (
-        <TooltipProvider>
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>{selectTrigger}</TooltipTrigger>
-            <TooltipContent>
-              Please select a course to get started
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      )}
-
+      <SelectTrigger className="w-full">
+        {!isCourseSelected ? (
+          <p className="text-gray-400 italic">Select a course</p>
+        ) : (
+          <p className="text-black dark:text-white">{selectedCourse.name}</p>
+        )}
+      </SelectTrigger>
       <SelectContent>
         <SelectItem
           className="text-gray-400 italic hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -82,9 +73,26 @@ function CourseSelector() {
       </SelectContent>
     </Select>
   );
+
+  return (
+    <Popover open={showPopover}>
+      <PopoverTrigger asChild>
+        <div className="w-full">{selectComponent}</div>
+      </PopoverTrigger>
+      <PopoverContent className="text-sm text-gray-700">
+        Please select a course to get started
+      </PopoverContent>
+    </Popover>
+  );
 }
 
-function ChatMessages({ messages }: { messages: IMessage[] | null }) {
+function ChatMessages({
+  messages,
+  tryTrigger = false,
+}: {
+  messages: IMessage[] | null;
+  tryTrigger: boolean;
+}) {
   const puns = [
     "Was that in a tute? Let me check",
     "Syllabus memorised better than you",
@@ -110,7 +118,7 @@ function ChatMessages({ messages }: { messages: IMessage[] | null }) {
           <img src="./favicon.png" alt="Logo" width={100} height={100} />
           <div className="text-3xl font-medium">{pun}</div>
           <div>
-            <CourseSelector />
+            <CourseSelector tryTrigger={tryTrigger} />
           </div>
         </div>
       )}
@@ -120,15 +128,24 @@ function ChatMessages({ messages }: { messages: IMessage[] | null }) {
 
 function ChatInput({
   handleSendMessage,
+  setTryTrigger,
 }: {
   handleSendMessage: (inputValue: string) => void;
+  setTryTrigger: (value: boolean) => void;
 }) {
   const [inputValue, setInputValue] = useState("");
   const [selectedCourse] = useAtom(selectedCourseAtom);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim() || selectedCourse?.name === "__none__" || !selectedCourse) {
+    if (!inputValue.trim()) {
+      return;
+    }
+    if (selectedCourse?.name === "__none__" || !selectedCourse) {
+      setTryTrigger(true);
+      setTimeout(() => {
+        setTryTrigger(false);
+      }, 3000);
       return;
     }
     handleSendMessage(inputValue);
@@ -161,6 +178,7 @@ function ChatInput({
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<IMessage[] | null>(null);
+  const [tryTrigger, setTryTrigger] = useState(false);
   const [selectedCourse] = useAtom(selectedCourseAtom);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -203,8 +221,11 @@ export default function ChatInterface() {
       <ChatSidebar isOpen={isSidebarOpen} />
       <div className="flex h-full flex-1 flex-col">
         <ChatHeader courseName={courseName} toggleSidebar={toggleSidebar} />
-        <ChatMessages messages={messages} />
-        <ChatInput handleSendMessage={handleSendMessage} />
+        <ChatMessages messages={messages} tryTrigger={tryTrigger} />
+        <ChatInput
+          handleSendMessage={handleSendMessage}
+          setTryTrigger={setTryTrigger}
+        />
       </div>
     </>
   );
