@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAuth } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 import { IChatInfo, IUserInfo } from "@/state";
 import { fetchRequest, Result, API_URL } from "@/api/utils";
 
@@ -34,7 +34,9 @@ export async function fetchUserCourses(): Promise<Result<string[]>> {
 
 export async function fetchChat(chatId: number): Promise<Result<IChatInfo>> {
   return fetchRequest(async () => {
-    const response = await axios.get<IChatInfo>(`${API_URL}/api/chat/${chatId}`);
+    const response = await axios.get<IChatInfo>(
+      `${API_URL}/api/chat/${chatId}`,
+    );
     return response.data;
   });
 }
@@ -53,14 +55,16 @@ export async function logIn(
 }
 
 export async function logOut(): Promise<Result<void>> {
-  return fetchRequest(async () => {
-    await axios.post(`${API_URL}/api/logout`);
-  });
+  // Just sign out the user using Firebase
+  try {
+    await signOut(auth);
+    return { success: true, data: undefined };
+  } catch (error) {
+    return { success: false, error: error as Error };
+  }
 }
 
-export async function changeAvatar(
-  avatar: string,
-): Promise<Result<IUserInfo>> {
+export async function changeAvatar(avatar: string): Promise<Result<IUserInfo>> {
   return fetchRequest(async () => {
     const response = await axios.post<IUserInfo>(`${API_URL}/api/user/avatar`, {
       avatar,
