@@ -10,6 +10,7 @@ interface IChatInfo {
   id: number;
   name: string;
   messages: IMessage[];
+  courseId: number;
 }
 
 interface ICourse {
@@ -37,35 +38,38 @@ const sampleChatHistory: IChatHistoryChat[] = [
     name: "Assignment Help",
     lastRole: Role.user,
     lastMessage: "Can you explain the assignment requirements?",
+    courseId: 1,
   },
   {
     id: 1,
     name: "Project Questions",
     lastRole: Role.assistant,
     lastMessage: "Sure! What do you need help with?",
+    courseId: 1,
   },
   {
     id: 3,
     name: "Exam Preparation",
     lastRole: Role.user,
     lastMessage: "What topics should I focus on for the exam?",
+    courseId: 3,
   },
 ];
 
 const sampleCourses: ICourse[] = [
-    { id: 1, name: "Mathematics" },
-    { id: 2, name: "Physics" },
-    { id: 3, name: "Chemistry" },
-    { id: 4, name: "Biology" },
-]
+  { id: 1, name: "Mathematics" },
+  { id: 2, name: "Physics" },
+  { id: 3, name: "Chemistry" },
+  { id: 4, name: "Biology" },
+];
 
 const sampleUserInfo: IUserInfo = {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@gmail.com",
-    avatar: "string",
-    courses: sampleCourses,
-    chatHistory: sampleChatHistory,
+  id: 1,
+  name: "John Doe",
+  email: "john.doe@gmail.com",
+  avatar: "string",
+  courses: sampleCourses,
+  chatHistory: sampleChatHistory,
 };
 
 export const selectedCourseAtom = atom<ICourse | null>(null);
