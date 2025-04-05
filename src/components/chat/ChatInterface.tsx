@@ -156,6 +156,7 @@ function ChatInput({
     <div className="border-t px-4 py-3">
       <form onSubmit={handleSubmit} className="flex items-end space-x-2">
         <Textarea
+          autoComplete="off"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => {
@@ -165,7 +166,7 @@ function ChatInput({
             }
           }}
           placeholder="Type your message..."
-          className="min-h-[48px] max-h-40 w-full max-w-full resize-none overflow-y-auto rounded-xl bg-gray-200 break-words break-all text-black placeholder-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-500 dark:bg-zinc-800 dark:text-white"
+          className="max-h-40 min-h-[48px] w-full max-w-full resize-none overflow-y-auto rounded-xl bg-gray-200 break-words break-all text-black placeholder-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-500 dark:bg-zinc-800 dark:text-white"
           rows={1}
         />
         <Button type="submit" className="h-[48px] w-[48px] rounded-xl p-0">
