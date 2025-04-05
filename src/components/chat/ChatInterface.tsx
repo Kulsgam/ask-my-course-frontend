@@ -16,11 +16,30 @@ import {
 import { useAtom } from "jotai";
 import { userInfoAtom } from "@/state";
 // Sample chat history data
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function CourseSelector() {
   const [userInfo] = useAtom(userInfoAtom);
   const courses = userInfo?.courses ?? [];
   const [selectedCourse, setSelectedCourse] = useAtom(selectedCourseAtom);
+
+  const isCourseSelected =
+    !!selectedCourse && selectedCourse.name !== "__none__";
+
+  const selectTrigger = (
+    <SelectTrigger className="w-full">
+      {!isCourseSelected ? (
+        <p className="text-gray-400 italic">Select a course</p>
+      ) : (
+        <p className="text-black dark:text-white">{selectedCourse.name}</p>
+      )}
+    </SelectTrigger>
+  );
 
   return (
     <Select
@@ -34,13 +53,19 @@ function CourseSelector() {
         }
       }}
     >
-      <SelectTrigger className="w-full">
-        {!selectedCourse || selectedCourse.name === "__none__" ? (
-          <p className="text-gray-400 italic">Select a course</p>
-        ) : (
-          <p className="text-black dark:text-white">{selectedCourse.name}</p>
-        )}
-      </SelectTrigger>
+      {isCourseSelected ? (
+        selectTrigger
+      ) : (
+        <TooltipProvider>
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>{selectTrigger}</TooltipTrigger>
+            <TooltipContent>
+              Please select a course to get started
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+
       <SelectContent>
         <SelectItem
           className="text-gray-400 italic hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -48,7 +73,7 @@ function CourseSelector() {
           key="__none__"
         >
           Select a course
-        </SelectItem>{" "}
+        </SelectItem>
         {courses.map((course) => (
           <SelectItem key={course.id} value={course.name}>
             {course.name}
@@ -99,10 +124,13 @@ function ChatInput({
   handleSendMessage: (inputValue: string) => void;
 }) {
   const [inputValue, setInputValue] = useState("");
+  const [selectedCourse] = useAtom(selectedCourseAtom);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || selectedCourse?.name === "__none__" || !selectedCourse) {
+      return;
+    }
     handleSendMessage(inputValue);
     setInputValue("");
   };
