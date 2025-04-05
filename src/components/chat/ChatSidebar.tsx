@@ -17,7 +17,6 @@ interface ChatSidebarProps {
   isOpen: boolean;
 }
 
-
 export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
   const [userInfo] = useAtom(userInfoAtom);
   const chatHistory = userInfo?.chatHistory ?? [];
@@ -61,7 +60,7 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
               <Button
                 key={idx}
                 variant="ghost"
-                className="relative w-full justify-start overflow-hidden pb-4 font-normal"
+                className="relative w-full justify-start overflow-hidden py-6 font-normal"
               >
                 <div className="flex w-full flex-col items-start overflow-hidden text-left">
                   <div className="flex w-full justify-between overflow-hidden">
