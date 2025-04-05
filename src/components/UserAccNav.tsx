@@ -9,15 +9,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAtom } from "jotai";
+import { userInfoAtom } from "@/state";
 
-interface UserAccountNavProps {
-  user: {
-    name: string;
-    avatar: string;
-  } | null;
-}
+export default function UserAccNav() {
+  const [userInfo] = useAtom(userInfoAtom);
+  const user = userInfo
+    ? {
+        name: userInfo.name,
+        avatar: userInfo.avatar,
+      }
+    : null;
 
-export default function UserAccNav({ user }: UserAccountNavProps) {
   if (!user) {
     return (
       <DropdownMenu>

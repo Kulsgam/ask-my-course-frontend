@@ -1,8 +1,6 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserAccountNav from "@/components/UserAccNav";
-import { useAtom } from "jotai";
-import { userInfoAtom } from "@/state";
 
 interface ChatHeaderProps {
   courseName: string | null;
@@ -13,13 +11,6 @@ export default function ChatHeader({
   courseName,
   toggleSidebar,
 }: ChatHeaderProps) {
-  const [userInfo] = useAtom(userInfoAtom);
-  const user = userInfo
-    ? {
-        name: userInfo.name,
-        avatar: userInfo.avatar,
-      }
-    : null;
   return (
     <header className="flex items-center justify-between border-b p-4">
       <div className="flex items-center">
@@ -29,7 +20,7 @@ export default function ChatHeader({
         <h1 className="ml-4 font-medium">{courseName ?? ""}</h1>
       </div>
 
-      <UserAccountNav user={user} />
+      <UserAccountNav />
     </header>
   );
 }
