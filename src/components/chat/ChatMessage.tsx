@@ -8,9 +8,7 @@ export default function ChatMessage({ message }: IChatMessageProps) {
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-      <div
-        className={`flex max-w-[80%] gap-3 ${isUser ? "flex-row-reverse" : ""}`}
-      >
+      <div className={`flex w-full gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
         <Avatar className={isUser ? "bg-primary" : "bg-muted"}>
           <AvatarFallback>
             {isUser ? (
@@ -20,21 +18,23 @@ export default function ChatMessage({ message }: IChatMessageProps) {
             )}
           </AvatarFallback>
         </Avatar>
-        <div>
-          <div
-            className={`rounded-lg p-3 whitespace-pre-wrap text-left ${isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
-          >
-            {message.content}
-          </div>
-          <div
-            className={`text-muted-foreground mt-1 w-full text-xs ${
-              isUser ? "pr-2 text-right" : "pl-2 text-left"
-            }`}
-          >
-            {message.timestamp.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+        <div className="max-w-[80%] break-words">
+          <div>
+            <div
+              className={`rounded-lg p-3 text-left whitespace-pre-wrap ${isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
+            >
+              {message.content}
+            </div>
+            <div
+              className={`text-muted-foreground mt-1 w-full text-xs ${
+                isUser ? "pr-2 text-right" : "pl-2 text-left"
+              }`}
+            >
+              {message.timestamp.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
           </div>
         </div>
       </div>
