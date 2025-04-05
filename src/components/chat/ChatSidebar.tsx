@@ -27,18 +27,6 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
       className={`bg-background border-r transition-all duration-300 ${isOpen ? "w-80" : "w-0 overflow-hidden"}`}
     >
       <div className="space-y-4 p-4">
-        <div className="space-y-2">
-          <div className="relative">
-            <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-            <Input
-              placeholder="Search conversations..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-
         <div className="space-y-1">
           <Button variant="outline" className="w-full justify-start">
             <MessageSquare className="mr-2 h-4 w-4" />
