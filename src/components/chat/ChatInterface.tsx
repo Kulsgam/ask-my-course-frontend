@@ -118,11 +118,11 @@ function ChatInput({
             }
           }}
           placeholder="Type your message..."
-          className="min-h-[48px] flex-1 resize-none rounded-xl bg-zinc-800 text-white placeholder-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-500"
+          className="min-h-[48px] flex-1 resize-none rounded-xl bg-gray-200 text-black placeholder-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-500 dark:bg-zinc-800 dark:text-white"
           rows={1}
         />
         <Button type="submit" className="h-[48px] w-[48px] rounded-xl p-0">
-          <Send className="mx-auto h-5 w-5" />
+          <Send className="dark:bg-primary bg-[oklch(0.205 0 0)] mx-auto h-5 w-5 text-white dark:text-black" />
         </Button>
       </form>
     </div>

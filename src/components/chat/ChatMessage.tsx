@@ -21,7 +21,7 @@ export default function ChatMessage({ message }: IChatMessageProps) {
         <div className="max-w-[80%] break-words">
           <div>
             <div
-              className={`rounded-lg p-3 text-left whitespace-pre-wrap ${isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
+              className={`rounded-lg p-3 text-left whitespace-pre-wrap ${isUser ? "dark:bg-primary bg-zinc-300 dark:text-primary-foreground text-black" : "bg-muted text-foreground"}`}
             >
               {message.content}
             </div>
