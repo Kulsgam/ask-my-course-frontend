@@ -35,48 +35,7 @@ export interface IUserInfo {
   chatHistory: IChatHistoryChat[];
 }
 
-const sampleChatHistory: IChatHistoryChat[] = [
-  {
-    id: 1,
-    name: "Assignment Help",
-    lastRole: Role.user,
-    lastMessage: "Can you explain the assignment requirements?",
-    courseName: "Mathematics",
-    university: "RMIT",
-    userId: 1,
-  },
-  {
-    id: 1,
-    name: "Project Questions",
-    lastRole: Role.assistant,
-    lastMessage: "Sure! What do you need help with?",
-    courseName: "Mathematics",
-    university: "RMIT",
-    userId: 1,
-  },
-  {
-    id: 3,
-    name: "Exam Preparation",
-    lastRole: Role.user,
-    lastMessage: "What topics should I focus on for the exam?",
-    courseName: "Physics",
-    university: "RMIT",
-    userId: 2,
-  },
-];
-
-
-const sampleUserInfo: IUserInfo = {
-  id: 1,
-  name: "John Doe",
-  email: "john.doe@gmail.com",
-  avatar: "string",
-  courses: ["Mathematics", "Physics"],
-  university: "RMIT",
-  chatHistory: sampleChatHistory,
-};
-
 export const selectedCourseAtom = atom<string | null>(null);
 export const chatInfoAtom = atom<IChatInfo | null>(null);
 export const activeChatIdAtom = atom<number | null>(null);
-export const userInfoAtom = atom<IUserInfo | null>(sampleUserInfo);
+export const userInfoAtom = atom<IUserInfo | null>(null);

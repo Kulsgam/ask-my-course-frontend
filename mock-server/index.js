@@ -6,43 +6,60 @@ const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
-
-// Dummy data
-let user = {
-  id: 1,
-  name: "Jane Doe",
-  email: "jane@example.com",
-  avatar: "https://cdn.example.com/avatar.jpg",
-  courses: ["Math 101", "CS 202"],
-  university: "Mock University",
-  chatHistory: [
-    { id: 101, name: "Algebra Q&A" },
-    { id: 102, name: "Intro to CS" },
-  ],
-};
-
-const chats = {
-  101: {
-    id: 101,
-    name: "Algebra Q&A",
-    messages: [
-      {
-        id: "m1",
-        content: "What is x in 2x+3=7?",
-        role: "User",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        id: "m2",
-        content: "x = 2",
-        role: "Assistant",
-        timestamp: new Date().toISOString(),
-      },
-    ],
-    courseName: "Math 101",
-    university: "Mock University",
+const chatHistory = [
+  {
+    id: 1,
+    name: "Assignment Help",
+    lastRole: Role.user,
+    lastMessage: "Can you explain the assignment requirements?",
+    courseName: "Mathematics",
+    university: "RMIT",
     userId: 1,
   },
+  {
+    id: 2,
+    name: "Project Questions",
+    lastRole: Role.assistant,
+    lastMessage: "Sure! What do you need help with?",
+    courseName: "Mathematics",
+    university: "RMIT",
+    userId: 1,
+  },
+  {
+    id: 3,
+    name: "Exam Preparation",
+    lastRole: Role.user,
+    lastMessage: "What topics should I focus on for the exam?",
+    courseName: "Physics",
+    university: "RMIT",
+    userId: 2,
+  },
+];
+
+const chats = chatHistory.map((chat, index) => ({
+  id: chat.id,
+  name: chat.name,
+  messages: [
+    {
+      id: `${index + 1}`,
+      content: chat.lastMessage,
+      role: chat.lastRole,
+      timestamp: new Date(),
+    },
+  ],
+  courseName: chat.courseName,
+  university: chat.university,
+  userId: chat.userId,
+}));
+
+const user = {
+  id: 1,
+  name: "John Doe",
+  email: "john.doe@gmail.com",
+  avatar: "string",
+  courses: ["Mathematics", "Physics"],
+  university: "RMIT",
+  chatHistory: chatHistory,
 };
 
 // Middleware to simulate auth
