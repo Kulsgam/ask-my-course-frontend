@@ -26,7 +26,11 @@ export default function ChatMessage({ message }: IChatMessageProps) {
           >
             {message.content}
           </div>
-          <div className="text-muted-foreground mt-1 text-xs">
+          <div
+            className={`text-muted-foreground mt-1 w-full text-xs ${
+              isUser ? "pr-2 text-right" : "pl-2 text-left"
+            }`}
+          >
             {message.timestamp.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",

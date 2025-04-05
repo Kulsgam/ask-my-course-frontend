@@ -70,5 +70,4 @@ const sampleUserInfo: IUserInfo = {
 
 export const selectedCourseAtom = atom<ICourse | null>(null);
 export const chatInfoAtom = atom<IChatInfo | null>(null);
-export const messagesAtom = atom<IMessage[]>([]);
 export const userInfoAtom = atom<IUserInfo | null>(sampleUserInfo);

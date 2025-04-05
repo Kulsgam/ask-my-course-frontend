@@ -12,7 +12,7 @@ export default function ChatHeader({
   toggleSidebar,
 }: ChatHeaderProps) {
   return (
-    <header className="flex items-center justify-between border-b p-4">
+    <header className="flex items-center justify-between border-b p-3">
       <div className="flex items-center">
         <Button variant="ghost" size="icon" onClick={toggleSidebar}>
           <Menu className="h-5 w-5" />

@@ -25,14 +25,15 @@ export default function UserAccNav() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Avatar>
-              <AvatarImage
-                src="/placeholder.svg?height=32&width=32"
-                alt="User"
-              />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-12 w-12 rounded-full"
+          >
+            <Avatar className="h-10 w-10">
+              <AvatarImage alt="User" />
               <AvatarFallback>
-                <User className="h-4 w-4" />
+                <User className="h-6 w-6" />
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -53,11 +54,11 @@ export default function UserAccNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Avatar>
-            <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+        <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full">
+          <Avatar className="h-10 w-10">
+            <AvatarImage alt="User" />
             <AvatarFallback>
-              <User className="h-4 w-4" />
+              <User className="h-6 w-6" />
             </AvatarFallback>
           </Avatar>
         </Button>

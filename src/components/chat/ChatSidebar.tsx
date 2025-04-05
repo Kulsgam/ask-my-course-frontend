@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, MessageSquare, Search } from "lucide-react";
+import { SearchIcon, MessageSquare, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -84,7 +84,7 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
               Recent Conversations
             </h3>
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <ChevronDown className="h-4 w-4" />
+              <SearchIcon className="h-4 w-4" />
             </Button>
           </div>
           <div className="space-y-1">
@@ -92,7 +92,7 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
               <Button
                 key={idx}
                 variant="ghost"
-                className="relative w-full justify-start overflow-hidden font-normal"
+                className="relative w-full justify-start overflow-hidden font-normal pb-4"
               >
                 <div className="flex w-full flex-col items-start overflow-hidden text-left">
                   <div className="flex w-full justify-between overflow-hidden">
