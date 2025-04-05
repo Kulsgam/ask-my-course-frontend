@@ -1,4 +1,4 @@
-import { UserPlus, LogIn, LogOut, User } from "lucide-react";
+import { LogIn, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -42,10 +42,6 @@ export default function UserAccNav() {
           <DropdownMenuItem>
             <LogIn className="mr-2 h-4 w-4" />
             <span>Log in</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <UserPlus className="mr-2 h-4 w-4" />
-            <span>Sign up</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -28,7 +28,7 @@ function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
   const [selectedCourse, setSelectedCourse] = useAtom(selectedCourseAtom);
   const [showPopover, setShowPopover] = useState(false);
 
-  const isCourseSelected = selectedCourse && selectedCourse.name !== "__none__";
+  const isCourseSelected = selectedCourse && selectedCourse !== "__none__";
 
   useEffect(() => {
     if (tryTrigger && !isCourseSelected) {
@@ -40,12 +40,12 @@ function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
 
   const selectComponent = (
     <Select
-      value={selectedCourse?.name ?? "__none__"}
+      value={selectedCourse ?? "__none__"}
       onValueChange={(value) => {
         if (value === "__none__") {
           setSelectedCourse(null);
         } else {
-          const course = courses.find((c) => c.name === value) ?? null;
+          const course = courses.find((c) => c === value) ?? null;
           setSelectedCourse(course);
         }
       }}
@@ -54,7 +54,7 @@ function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
         {!isCourseSelected ? (
           <p className="text-gray-400 italic">Select a course</p>
         ) : (
-          <p className="text-black dark:text-white">{selectedCourse.name}</p>
+          <p className="text-black dark:text-white">{selectedCourse}</p>
         )}
       </SelectTrigger>
       <SelectContent>
@@ -66,8 +66,8 @@ function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
           Select a course
         </SelectItem>
         {courses.map((course) => (
-          <SelectItem key={course.id} value={course.name}>
-            {course.name}
+          <SelectItem key={course} value={course}>
+            {course}
           </SelectItem>
         ))}
       </SelectContent>
@@ -141,7 +141,7 @@ function ChatInput({
     if (!inputValue.trim()) {
       return;
     }
-    if (selectedCourse?.name === "__none__" || !selectedCourse) {
+    if (selectedCourse === "__none__" || !selectedCourse) {
       setTryTrigger(true);
       setTimeout(() => {
         setTryTrigger(false);
@@ -187,7 +187,7 @@ export default function ChatInterface() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const courseName = selectedCourse?.name ?? null;
+  const courseName = selectedCourse ?? null;
 
   const handleSendMessage = (inputValue: string) => {
     if (!inputValue.trim()) return;
