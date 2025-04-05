@@ -84,7 +84,9 @@ function ChatMessages({ messages }: { messages: IMessage[] | null }) {
         <div className="flex h-full flex-col items-center justify-center space-y-4 text-center text-gray-500 select-none">
           <img src="./favicon.png" alt="Logo" width={100} height={100} />
           <div className="text-3xl font-medium">{pun}</div>
-          <CourseSelector />
+          <div>
+            <CourseSelector />
+          </div>
         </div>
       )}
     </div>
