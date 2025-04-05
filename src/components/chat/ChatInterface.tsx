@@ -12,18 +12,10 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { useAtom } from "jotai";
 import { userInfoAtom } from "@/state";
 // Sample chat history data
-
-function SelectPlaceholder({ courseName }: { courseName: string | null }) {
-  if (!courseName || courseName === "__none__") {
-    return <p className="text-gray-400 italic">Select a course</p>;
-  }
-  return <p className="text-white dark:text-black">{courseName}</p>;
-}
 
 function CourseSelector() {
   const [userInfo] = useAtom(userInfoAtom);
@@ -43,13 +35,11 @@ function CourseSelector() {
       }}
     >
       <SelectTrigger className="w-full">
-        <SelectValue
-          placeholder={
-            <SelectPlaceholder
-              courseName={selectedCourse?.name ?? "Select a course"}
-            />
-          }
-        />
+        {!selectedCourse || selectedCourse.name === "__none__" ? (
+          <p className="text-gray-400 italic">Select a course</p>
+        ) : (
+          <p className="text-black dark:text-white">{selectedCourse.name}</p>
+        )}
       </SelectTrigger>
       <SelectContent>
         <SelectItem
