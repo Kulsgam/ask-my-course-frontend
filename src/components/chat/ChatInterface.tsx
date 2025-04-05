@@ -12,6 +12,14 @@ import { useAtom } from "jotai";
 // Sample chat history data
 
 function ChatMessages({ messages }: { messages: IMessage[] | null }) {
+  const puns = [
+    "Was that in a tute? Let me check",
+    "Syllabus memorised better than you",
+    "Chatbot or secret course weapon?",
+    "Got a course question, or just testing my genius?",
+    "Course content? I'm basically the answer key",
+  ];
+
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
       {messages && messages.length > 0 ? (
@@ -20,14 +28,9 @@ function ChatMessages({ messages }: { messages: IMessage[] | null }) {
         ))
       ) : (
         <div className="flex h-full flex-col items-center justify-center space-y-4 text-center text-gray-500 select-none">
-          <img
-            src="./favicon.png"
-            alt="Logo"
-            width={100}
-            height={100}
-          />
+          <img src="./favicon.png" alt="Logo" width={100} height={100} />
           <div className="text-3xl font-medium">
-            Ready to chat whenever you are! 😊
+            {puns[Math.floor(Math.random() * puns.length)]}
           </div>
         </div>
       )}
