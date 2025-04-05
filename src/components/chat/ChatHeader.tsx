@@ -1,14 +1,8 @@
-import { Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import UserAccountNav from "@/components/UserAccNav";
+import { useAtom } from "jotai";
+import { userInfoAtom } from "@/state";
 
 interface ChatHeaderProps {
   courseName: string | null;
@@ -19,6 +13,13 @@ export default function ChatHeader({
   courseName,
   toggleSidebar,
 }: ChatHeaderProps) {
+  const [userInfo] = useAtom(userInfoAtom);
+  const user = userInfo
+    ? {
+        name: userInfo.name,
+        avatar: userInfo.avatar,
+      }
+    : null;
   return (
     <header className="flex items-center justify-between border-b p-4">
       <div className="flex items-center">
@@ -28,35 +29,7 @@ export default function ChatHeader({
         <h1 className="ml-4 font-medium">{courseName ?? ""}</h1>
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Avatar>
-              <AvatarImage
-                src="/placeholder.svg?height=32&width=32"
-                alt="User"
-              />
-              <AvatarFallback>
-                <User className="h-4 w-4" />
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel className="select-none">
-            My Account
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>Account Settings</DropdownMenuItem>
-          <DropdownMenuItem>Subscription</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Sign out</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <UserAccountNav user={user} />
     </header>
   );
 }
