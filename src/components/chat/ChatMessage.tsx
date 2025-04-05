@@ -22,7 +22,7 @@ export default function ChatMessage({ message }: IChatMessageProps) {
         </Avatar>
         <div>
           <div
-            className={`rounded-lg p-3 ${isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
+            className={`rounded-lg p-3 whitespace-pre-wrap text-left ${isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
           >
             {message.content}
           </div>
