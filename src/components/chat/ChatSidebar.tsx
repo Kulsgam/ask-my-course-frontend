@@ -17,11 +17,10 @@ interface ChatSidebarProps {
   isOpen: boolean;
 }
 
+
 export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
   const [userInfo] = useAtom(userInfoAtom);
-  const courses = userInfo?.courses ?? [];
   const chatHistory = userInfo?.chatHistory ?? [];
-  const [selectedCourse, setSelectedCourse] = useAtom(selectedCourseAtom);
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -30,36 +29,6 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
     >
       <div className="space-y-4 p-4">
         <div className="space-y-2">
-          <Select
-            value={selectedCourse?.name ?? "__none__"}
-            onValueChange={(value) => {
-              if (value === "__none__") {
-                setSelectedCourse(null);
-              } else {
-                const course = courses.find((c) => c.name === value) ?? null;
-                setSelectedCourse(course);
-              }
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a course" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                className="text-gray-400 italic hover:bg-gray-100 dark:hover:bg-gray-800"
-                value="__none__"
-                key="__none__"
-              >
-                Select a course
-              </SelectItem>{" "}
-              {courses.map((course) => (
-                <SelectItem key={course.id} value={course.name}>
-                  {course.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
           <div className="relative">
             <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
             <Input
@@ -92,7 +61,7 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
               <Button
                 key={idx}
                 variant="ghost"
-                className="relative w-full justify-start overflow-hidden font-normal pb-4"
+                className="relative w-full justify-start overflow-hidden pb-4 font-normal"
               >
                 <div className="flex w-full flex-col items-start overflow-hidden text-left">
                   <div className="flex w-full justify-between overflow-hidden">

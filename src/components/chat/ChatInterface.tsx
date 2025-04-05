@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,9 +7,67 @@ import ChatHeader from "./ChatHeader";
 import ChatMessage from "./ChatMessage";
 import { IMessage } from "@/components/chat/types";
 import { Role, selectedCourseAtom } from "@/state";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAtom } from "jotai";
-
+import { userInfoAtom } from "@/state";
 // Sample chat history data
+
+function SelectPlaceholder({ courseName }: { courseName: string | null }) {
+  if (!courseName || courseName === "__none__") {
+    return <p className="text-gray-400 italic">Select a course</p>;
+  }
+  return <p className="text-white dark:text-black">{courseName}</p>;
+}
+
+function CourseSelector() {
+  const [userInfo] = useAtom(userInfoAtom);
+  const courses = userInfo?.courses ?? [];
+  const [selectedCourse, setSelectedCourse] = useAtom(selectedCourseAtom);
+
+  return (
+    <Select
+      value={selectedCourse?.name ?? "__none__"}
+      onValueChange={(value) => {
+        if (value === "__none__") {
+          setSelectedCourse(null);
+        } else {
+          const course = courses.find((c) => c.name === value) ?? null;
+          setSelectedCourse(course);
+        }
+      }}
+    >
+      <SelectTrigger className="w-full">
+        <SelectValue
+          placeholder={
+            <SelectPlaceholder
+              courseName={selectedCourse?.name ?? "Select a course"}
+            />
+          }
+        />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem
+          className="text-gray-400 italic hover:bg-gray-100 dark:hover:bg-gray-800"
+          value="__none__"
+          key="__none__"
+        >
+          Select a course
+        </SelectItem>{" "}
+        {courses.map((course) => (
+          <SelectItem key={course.id} value={course.name}>
+            {course.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
 
 function ChatMessages({ messages }: { messages: IMessage[] | null }) {
   const puns = [
@@ -20,6 +78,12 @@ function ChatMessages({ messages }: { messages: IMessage[] | null }) {
     "Course content? I'm basically the answer key",
   ];
 
+  // Only choose pun when reloaded using hooks
+  const pun = useMemo(
+    () => puns[Math.floor(Math.random() * puns.length)],
+    [messages],
+  );
+
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
       {messages && messages.length > 0 ? (
@@ -29,9 +93,8 @@ function ChatMessages({ messages }: { messages: IMessage[] | null }) {
       ) : (
         <div className="flex h-full flex-col items-center justify-center space-y-4 text-center text-gray-500 select-none">
           <img src="./favicon.png" alt="Logo" width={100} height={100} />
-          <div className="text-3xl font-medium">
-            {puns[Math.floor(Math.random() * puns.length)]}
-          </div>
+          <div className="text-3xl font-medium">{pun}</div>
+          <CourseSelector />
         </div>
       )}
     </div>
