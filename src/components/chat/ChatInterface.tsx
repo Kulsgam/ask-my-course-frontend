@@ -24,7 +24,6 @@ import { useNavigate } from "react-router-dom";
 import { createNewChatOnServer, sendQuery } from "@/api/user";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-// Sample chat history data
 
 function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
   const [userInfo] = useAtom(userInfoAtom);
@@ -105,7 +104,6 @@ function ChatMessages({
     "Course content? I'm basically the answer key",
   ];
 
-  // Only choose pun when reloaded using hooks
   const pun = useMemo(
     () => puns[Math.floor(Math.random() * puns.length)],
     [messages],
@@ -115,7 +113,8 @@ function ChatMessages({
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
       {messages && messages.length > 0 ? (
         messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
+          // Ensure that each message has a unique key
+          <ChatMessage key={message.id ?? Math.random()} message={message} />
         ))
       ) : (
         <div className="flex h-full flex-col items-center justify-center space-y-4 text-center text-gray-500 select-none">
@@ -202,7 +201,9 @@ export default function ChatInterface() {
     let shouldNavigate: boolean = false;
 
     try {
-      if (!chatInfo) {
+      // Use a local variable to store the current chat info.
+      let currentChatInfo = chatInfo;
+      if (!currentChatInfo) {
         const response = await createNewChatOnServer(
           courseName ?? "MATH",
           university,
@@ -220,14 +221,15 @@ export default function ChatInterface() {
         if (!_chatInfo) {
           throw new Error("Failed to create new chat");
         }
-        isQueryAdded = true; // Because createNewChatOnServer already added the query
-        shouldNavigate = true; // Because we are creating a new chat
+        isQueryAdded = true; // createNewChatOnServer already added the query
+        shouldNavigate = true; // we are creating a new chat
+        currentChatInfo = _chatInfo;
         setChatInfo(_chatInfo);
       }
-      // Now send the message to the server
+
+      // Use the local variable (currentChatInfo) for sending the query.
       const chatbot_res = await sendQuery(
-        // @ts-ignore
-        chatInfo.id,
+        currentChatInfo.id,
         message,
         isQueryAdded,
       );
@@ -236,36 +238,36 @@ export default function ChatInterface() {
         throw new Error("Failed to send message: " + chatbot_res.error.message);
       }
 
+      // Safely generate new message IDs based on the last message (or start at 1)
+      const lastMessageId =
+        currentChatInfo.messages && currentChatInfo.messages.length > 0
+          ? currentChatInfo.messages[currentChatInfo.messages.length - 1].id
+          : 0;
+
       const userMessage: IMessage = {
-        // @ts-ignore
-        id: chatInfo.messages[chatInfo.messages.length - 1].id + 1,
+        id: lastMessageId + 1,
         content: message,
         role: Role.user,
         timestamp: new Date(),
       };
 
-      // Add the assistant's response to the chatInfo
       const assistantMessage: IMessage = {
-        // @ts-ignore
-        id: chatInfo.messages[chatInfo.messages.length - 1].id + 2,
+        id: lastMessageId + 2,
         content: chatbot_res.data,
         role: Role.assistant,
         timestamp: new Date(),
       };
 
-      // Update the chatInfo state with the new messages
-      // @ts-ignore
-      chatInfo.messages.push(userMessage);
-      // @ts-ignore
-      chatInfo.messages.push(assistantMessage);
-      setChatInfo(chatInfo);
+      // Update messages in the local copy and then update state.
+      currentChatInfo.messages.push(userMessage);
+      currentChatInfo.messages.push(assistantMessage);
+      // Create a new object for state update to trigger a re-render.
+      setChatInfo({ ...currentChatInfo });
 
       if (shouldNavigate) {
-        // @ts-ignore
-        navigate(`/chat/${chatInfo.id}`);
+        navigate(`/chat/${currentChatInfo.id}`);
       }
     } catch (error: any) {
-      // Display the error using ShadCN's toast UI
       toast.error(error.message ?? "An error occurred");
       console.error("Error in handleSendMessage:", error);
     }
