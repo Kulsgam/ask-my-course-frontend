@@ -22,6 +22,8 @@ import {
 } from "@radix-ui/react-popover";
 import { useNavigate } from "react-router-dom";
 import { createNewChatOnServer, sendQuery } from "@/api/user";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 // Sample chat history data
 
 function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
@@ -262,9 +264,10 @@ export default function ChatInterface() {
         // @ts-ignore
         navigate(`/chat/${chatInfo.id}`);
       }
-    } catch (error) {
-      // TODO: Handle error
-      console.error("Error creating new chat:", error);
+    } catch (error: any) {
+      // Display the error using ShadCN's toast UI
+      toast.error(error.message ?? "An error occurred");
+      console.error("Error in handleSendMessage:", error);
     }
   };
 
@@ -277,6 +280,7 @@ export default function ChatInterface() {
           messages={chatInfo?.messages ?? []}
           tryTrigger={tryTrigger}
         />
+        <Toaster />
         <ChatInput
           handleSendMessage={handleSendMessage}
           setTryTrigger={setTryTrigger}

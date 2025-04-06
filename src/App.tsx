@@ -33,7 +33,6 @@ function ChatWithIdWrapper() {
         const chatInfo = result.data;
         if (chatInfo) {
           setChatInfo(chatInfo);
-          console.log(chatInfo);
         }
       } else {
         navigate("/");
