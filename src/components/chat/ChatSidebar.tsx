@@ -17,11 +17,16 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Filter chats based on search query
-  const filteredChats = chatHistory.filter(
-    (chat) =>
-      chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredChats = chatHistory
+    .filter(
+      (chat) =>
+        chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
+    .sort(
+      (a, b) =>
+        b.lastMessageTimestamp.getTime() - a.lastMessageTimestamp.getTime(),
+    );
 
   const selectedChatId = chatInfo?.id;
 
