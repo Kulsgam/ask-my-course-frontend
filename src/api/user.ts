@@ -106,7 +106,7 @@ export async function fetchUserInfo(): Promise<Result<IUserInfo | null>> {
 export async function fetchChat(chatId: number): Promise<Result<IChatInfo>> {
   const { data, error } = await supabase
     .from("chat")
-    .select("*, message(*), messageSequence(*)") // include related messages if needed
+    .select("*, message(*), messagesequence(*)") // include related messages if needed
     .eq("id", chatId)
     .single();
 
