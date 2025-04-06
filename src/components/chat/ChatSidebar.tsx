@@ -3,7 +3,7 @@ import { SearchIcon, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAtom } from "jotai";
-import { userInfoAtom } from "@/state";
+import { chatInfoAtom, userInfoAtom } from "@/state";
 import { useNavigate } from "react-router-dom";
 
 interface ChatSidebarProps {
@@ -12,6 +12,7 @@ interface ChatSidebarProps {
 
 export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
   const [userInfo] = useAtom(userInfoAtom);
+  const [chatInfo] = useAtom(chatInfoAtom);
   const chatHistory = userInfo?.chatHistory ?? [];
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -21,6 +22,8 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
       chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const selectedChatId = chatInfo?.id;
 
   const navigate = useNavigate();
 
@@ -64,27 +67,34 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
           </div>
 
           {/* Chat List */}
-          <div className="space-y-1">
+          <div className="max-h-[calc(100vh-200px)] space-y-1 overflow-y-auto">
             {filteredChats.length > 0 ? (
-              filteredChats.map((chat, idx) => (
-                <Button
-                  key={idx}
-                  variant="ghost"
-                  className="relative w-full justify-start overflow-hidden py-6 font-normal"
-                  onClick={() => {
-                    navigate(`/chat/${chat.id}`);
-                  }}
-                >
-                  <div className="flex w-full flex-col items-start overflow-hidden text-left">
-                    <div className="flex w-full justify-between overflow-hidden">
-                      <span className="truncate font-medium">{chat.name}</span>
+              filteredChats.map((chat, idx) => {
+                const isSelected = chat.id === selectedChatId;
+                return (
+                  <Button
+                    key={idx}
+                    variant="ghost"
+                    className={`relative w-full justify-start overflow-hidden py-6 font-normal ${
+                      isSelected ? "bg-accent" : ""
+                    }`}
+                    onClick={() => {
+                      navigate(`/chat/${chat.id}`);
+                    }}
+                  >
+                    <div className="flex w-full flex-col items-start overflow-hidden text-left">
+                      <div className="flex w-full justify-between overflow-hidden">
+                        <span className="truncate font-medium">
+                          {chat.name}
+                        </span>
+                      </div>
+                      <span className="text-muted-foreground w-full truncate text-xs">
+                        {chat.lastRole}: {chat.lastMessage}
+                      </span>
                     </div>
-                    <span className="text-muted-foreground w-full truncate text-xs">
-                      {chat.lastRole}: {chat.lastMessage}
-                    </span>
-                  </div>
-                </Button>
-              ))
+                  </Button>
+                );
+              })
             ) : (
               <p className="text-muted-foreground pt-4 text-center text-sm">
                 No conversations found.
