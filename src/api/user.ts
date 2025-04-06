@@ -3,16 +3,15 @@ import { IChatInfo, IUserInfo } from "@/state";
 import { fetchRequest, Result } from "@/api/utils";
 import axios from "axios";
 
-const { VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_URL } = import.meta
-  .env;
+const { VITE_SUPABASE_URL, VITE_SUPABASE_API, VITE_API_URL } = import.meta.env;
 
-if (!VITE_SUPABASE_URL || !VITE_SUPABASE_ANON_KEY || !VITE_API_URL) {
+if (!VITE_SUPABASE_URL || !VITE_SUPABASE_API || !VITE_API_URL) {
   throw new Error(
     "Supabase URL or Anon Key is not defined or API URL is not defined",
   );
 }
 
-const supabase = createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY);
+const supabase = createClient(VITE_SUPABASE_URL, VITE_SUPABASE_API);
 
 // ✅ Checks if a user is logged in
 export async function isLoggedIn() {
