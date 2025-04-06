@@ -62,7 +62,8 @@ const user = {
   id: 1,
   name: "John Doe",
   email: "john.doe@gmail.com",
-  avatar: "string",
+  avatar:
+    "https://en.meming.world/images/en/thumb/2/2c/Surprised_Pikachu_HD.jpg/300px-Surprised_Pikachu_HD.jpg",
   courses: ["Mathematics", "Physics"],
   university: "RMIT",
   chatHistory: chatHistory,
