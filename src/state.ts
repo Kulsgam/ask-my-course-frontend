@@ -37,5 +37,4 @@ export interface IUserInfo {
 
 export const selectedCourseAtom = atom<string | null>(null);
 export const chatInfoAtom = atom<IChatInfo | null>(null);
-export const activeChatIdAtom = atom<number | null>(null);
 export const userInfoAtom = atom<IUserInfo | null>(null);

@@ -6,6 +6,12 @@ const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
+
+const Role = {
+  user: "User",
+  assistant: "Assistant",
+};
+
 const chatHistory = [
   {
     id: 1,

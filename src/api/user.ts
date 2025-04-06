@@ -25,13 +25,6 @@ export async function fetchUserInfo(): Promise<Result<IUserInfo | null>> {
   });
 }
 
-export async function fetchUserCourses(): Promise<Result<string[]>> {
-  return fetchRequest(async () => {
-    const response = await axios.get<string[]>(`${API_URL}/api/courses/`);
-    return response.data;
-  });
-}
-
 export async function fetchChat(chatId: number): Promise<Result<IChatInfo>> {
   return fetchRequest(async () => {
     const response = await axios.get<IChatInfo>(
@@ -64,11 +57,11 @@ export async function logOut(): Promise<Result<void>> {
   }
 }
 
-export async function changeAvatar(avatar: string): Promise<Result<IUserInfo>> {
-  return fetchRequest(async () => {
-    const response = await axios.post<IUserInfo>(`${API_URL}/api/user/avatar`, {
-      avatar,
-    });
-    return response.data;
-  });
-}
+// export async function changeAvatar(avatar: string): Promise<Result<IUserInfo>> {
+//   return fetchRequest(async () => {
+//     const response = await axios.post<IUserInfo>(`${API_URL}/api/user/avatar`, {
+//       avatar,
+//     });
+//     return response.data;
+//   });
+// }
