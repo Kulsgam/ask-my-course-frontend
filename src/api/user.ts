@@ -3,10 +3,10 @@ import { IChatInfo, IUserInfo } from "@/state";
 import { fetchRequest, Result } from "@/api/utils";
 import axios from "axios";
 
-const { VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY } = import.meta.env;
+const { VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_URL } = import.meta.env;
 
-if (!VITE_SUPABASE_URL || !VITE_SUPABASE_ANON_KEY) {
-  throw new Error("Supabase URL or Anon Key is not defined");
+if (!VITE_SUPABASE_URL || !VITE_SUPABASE_ANON_KEY || !VITE_API_URL) {
+  throw new Error("Supabase URL or Anon Key is not defined or API URL is not defined");
 }
 
 const supabase = createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY);
@@ -166,7 +166,7 @@ export async function createNewChatOnServer(
   uuid: string,
 ): Promise<Result<IChatInfo>> {
   return await fetchRequest<IChatInfo>(async () => {
-    return await axios.post("/api/chat", {
+    return await axios.post(`${VITE_API_URL}/api/chat`, {
       university,
       courseName,
       query: message,
@@ -181,7 +181,7 @@ export async function sendQuery(
   is_query_added: boolean = false,
 ): Promise<Result<string>> {
   return await fetchRequest(async () => {
-    return await axios.post("/api/query", {
+    return await axios.post(`${VITE_API_URL}/api/query`, {
       chatId,
       student_query: query,
       is_query_added,
