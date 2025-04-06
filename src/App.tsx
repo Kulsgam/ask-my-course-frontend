@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import "./App.css";
 import ChatInterface from "@/components/chat";
-import { fetchUserInfo } from "./api/user";
+import { fetchUserInfo } from "@/api/user";
 import { useAtom } from "jotai";
 import { userInfoAtom } from "./state";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 export default function App() {
   const [_, setUserInfo] = useAtom(userInfoAtom);
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
 
   useEffect(() => {
     (async function () {
@@ -19,7 +19,7 @@ export default function App() {
           setUserInfo(userInfo);
         }
       } else {
-        navigate("/login");
+        // navigate("/login");
       }
     })();
   }, []);
