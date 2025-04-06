@@ -11,9 +11,10 @@ if (!VITE_SUPABASE_URL || !VITE_SUPABASE_ANON_KEY) {
 const supabase = createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY);
 
 // ✅ Checks if a user is logged in
-export function isLoggedIn() {
-  const user = supabase.auth.getUser();
-  return !!user;
+export async function isLoggedIn() {
+  const user = await supabase.auth.getUser();
+  console.log(user);
+  return user.error === null;
 }
 
 // ✅ Fetch user info from the Supabase 'User' table

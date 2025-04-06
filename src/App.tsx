@@ -54,11 +54,9 @@ export default function App() {
   useEffect(() => {
     (async function () {
       const result = await fetchUserInfo();
-      if (result.success) {
-        const userInfo = result.data;
-        if (userInfo) {
-          setUserInfo(userInfo);
-        }
+      const userInfo = result.success ? result.data : null;
+      if (userInfo) {
+        setUserInfo(userInfo);
       } else {
         navigate("/login");
       }
