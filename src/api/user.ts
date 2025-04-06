@@ -195,8 +195,8 @@ export async function createNewChatOnServer(
 }
 
 export async function sendQuery(
-  chatId: number,
-  query: string,
+  chat_id: number,
+  student_query: string,
   is_query_added: boolean = false,
 ): Promise<Result<string>> {
   const {
@@ -211,8 +211,8 @@ export async function sendQuery(
     return await axios.post(
       `${VITE_API_URL}/api/query`,
       {
-        chatId,
-        student_query: query,
+        chat_id,
+        student_query,
         is_query_added,
       },
       {
