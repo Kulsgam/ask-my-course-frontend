@@ -22,8 +22,6 @@ function ChatWithIdWrapper() {
 
   const chatIdNumber = Number(chatId);
 
-  console.log(chatIdNumber);
-
   if (!chatId || isNaN(chatIdNumber) || chatIdNumber <= 0) {
     return <Navigate to="/" />;
   }
@@ -35,6 +33,7 @@ function ChatWithIdWrapper() {
         const chatInfo = result.data;
         if (chatInfo) {
           setChatInfo(chatInfo);
+          console.log(chatInfo);
         }
       } else {
         navigate("/");

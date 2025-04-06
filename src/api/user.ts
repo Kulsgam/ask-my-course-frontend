@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { IChatInfo, IUserInfo } from "@/state";
-import { Result } from "@/api/utils";
+import { fetchRequest, Result } from "@/api/utils";
+import axios from "axios";
 
 const { VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY } = import.meta.env;
 
@@ -64,6 +65,7 @@ async function getUser(userId: string) {
   }
 
   const userInfo: IUserInfo = {
+    uuid: userData.userid,
     name: userData.name,
     email: userData.email,
     avatar: userData.avatar,
@@ -111,7 +113,22 @@ export async function fetchChat(chatId: number): Promise<Result<IChatInfo>> {
     .single();
 
   if (error) return { success: false, error };
-  return { success: true, data };
+
+  const chatInfo: IChatInfo = {
+    id: data.id,
+    name: data.name,
+    courseName: data.coursename,
+    university: data.university,
+    userId: data.userid,
+    messages: data.message.map((message: any) => ({
+      id: message.id,
+      content: message.content,
+      role: message.role,
+      timestamp: new Date(message.timestamp),
+    })),
+  };
+
+  return { success: true, data: chatInfo };
 }
 
 // ✅ Log in with Supabase auth
@@ -140,4 +157,34 @@ export async function logOut(): Promise<Result<void>> {
 
   if (error) return { success: false, error };
   return { success: true, data: undefined };
+}
+
+export async function createNewChatOnServer(
+  courseName: string,
+  university: string,
+  message: string,
+  uuid: string,
+): Promise<Result<IChatInfo>> {
+  return await fetchRequest<IChatInfo>(async () => {
+    return await axios.post("/api/chat", {
+      university,
+      courseName,
+      query: message,
+      uuid,
+    });
+  });
+}
+
+export async function sendQuery(
+  chatId: number,
+  query: string,
+  is_query_added: boolean = false,
+): Promise<Result<string>> {
+  return await fetchRequest(async () => {
+    return await axios.post("/api/query", {
+      chatId,
+      student_query: query,
+      is_query_added,
+    });
+  });
 }

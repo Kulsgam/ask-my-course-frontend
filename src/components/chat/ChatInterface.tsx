@@ -6,7 +6,7 @@ import ChatSidebar from "./ChatSidebar";
 import ChatHeader from "./ChatHeader";
 import ChatMessage from "./ChatMessage";
 import { IMessage } from "@/components/chat/types";
-import { Role, selectedCourseAtom } from "@/state";
+import { chatInfoAtom, Role, selectedCourseAtom } from "@/state";
 import {
   Select,
   SelectContent,
@@ -20,6 +20,8 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@radix-ui/react-popover";
+import { useNavigate } from "react-router-dom";
+import { createNewChatOnServer, sendQuery } from "@/api/user";
 // Sample chat history data
 
 function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
@@ -178,9 +180,12 @@ function ChatInput({
 }
 
 export default function ChatInterface() {
-  const [messages, setMessages] = useState<IMessage[] | null>(null);
   const [tryTrigger, setTryTrigger] = useState(false);
   const [selectedCourse] = useAtom(selectedCourseAtom);
+  const [chatInfo, setChatInfo] = useAtom(chatInfoAtom);
+  const [userInfo] = useAtom(userInfoAtom);
+  const university = userInfo?.university ?? "RMIT";
+  const navigate = useNavigate();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const toggleSidebar = () => {
@@ -188,33 +193,79 @@ export default function ChatInterface() {
   };
 
   const courseName = selectedCourse ?? null;
+  const handleSendMessage = async (message: string) => {
+    if (!message.trim()) return;
 
-  const handleSendMessage = (inputValue: string) => {
-    if (!inputValue.trim()) return;
+    let isQueryAdded: boolean = false;
+    let shouldNavigate: boolean = false;
 
-    // Add user message
-    const newUserMessage: IMessage = {
-      id: Date.now().toString(),
-      content: inputValue,
-      role: Role.user,
-      timestamp: new Date(),
-    };
+    try {
+      if (!chatInfo) {
+        const response = await createNewChatOnServer(
+          university,
+          courseName ?? "MATH",
+          message,
+          userInfo?.uuid ?? "",
+        );
 
-    setMessages([...(messages ?? []), newUserMessage]);
+        if (!response.success) {
+          throw new Error(
+            "Failed to create new chat: " + response.error.message,
+          );
+        }
 
-    // Simulate assistant response
-    setTimeout(() => {
+        const _chatInfo = response.data;
+        if (!_chatInfo) {
+          throw new Error("Failed to create new chat");
+        }
+        isQueryAdded = true; // Because createNewChatOnServer already added the query
+        shouldNavigate = true; // Because we are creating a new chat
+        setChatInfo(_chatInfo);
+      }
+      // Now send the message to the server
+      const chatbot_res = await sendQuery(
+        // @ts-ignore
+        chatInfo.id,
+        message,
+        isQueryAdded,
+      );
+
+      if (!chatbot_res.success) {
+        throw new Error("Failed to send message: " + chatbot_res.error.message);
+      }
+
+      const userMessage: IMessage = {
+        // @ts-ignore
+        id: chatInfo.messages[chatInfo.messages.length - 1].id + 1,
+        content: message,
+        role: Role.user,
+        timestamp: new Date(),
+      };
+
+      // Add the assistant's response to the chatInfo
       const assistantMessage: IMessage = {
-        id: (Date.now() + 1).toString(),
-        content: "I'm processing your question. Let me help you with that.",
+        // @ts-ignore
+        id: chatInfo.messages[chatInfo.messages.length - 1].id + 2,
+        content: chatbot_res.data,
         role: Role.assistant,
         timestamp: new Date(),
       };
-      setMessages((prev: IMessage[] | null) => [
-        ...(prev ?? []),
-        assistantMessage,
-      ]);
-    }, 1000);
+
+      // Update the chatInfo state with the new messages
+      // @ts-ignore
+      chatInfo.messages.push(userMessage);
+      // @ts-ignore
+      chatInfo.messages.push(assistantMessage);
+      setChatInfo(chatInfo);
+
+      if (shouldNavigate) {
+        // @ts-ignore
+        navigate(`/chat/${chatInfo.id}`);
+      }
+    } catch (error) {
+      // TODO: Handle error
+      console.error("Error creating new chat:", error);
+    }
   };
 
   return (
@@ -222,7 +273,10 @@ export default function ChatInterface() {
       <ChatSidebar isOpen={isSidebarOpen} />
       <div className="flex h-full flex-1 flex-col">
         <ChatHeader courseName={courseName} toggleSidebar={toggleSidebar} />
-        <ChatMessages messages={messages} tryTrigger={tryTrigger} />
+        <ChatMessages
+          messages={chatInfo?.messages ?? []}
+          tryTrigger={tryTrigger}
+        />
         <ChatInput
           handleSendMessage={handleSendMessage}
           setTryTrigger={setTryTrigger}

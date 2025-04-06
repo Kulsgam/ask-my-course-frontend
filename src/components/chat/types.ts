@@ -1,7 +1,7 @@
 import { Role } from "@/state";
 
 export interface IMessage {
-  id: string;
+  id: number;
   content: string;
   role: Role;
   timestamp: Date;

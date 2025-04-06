@@ -26,6 +26,7 @@ interface IChatHistoryChat extends Omit<IChatInfo, "messages"> {
 }
 
 export interface IUserInfo {
+  uuid: string;
   name: string;
   email: string;
   avatar: string;
