@@ -1,88 +1,81 @@
-import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { createClient } from "@supabase/supabase-js";
 import { IChatInfo, IUserInfo } from "@/state";
-import { fetchRequest, Result } from "@/api/utils";
-import { initializeApp } from "firebase/app";
-import firebaseConfig from "../../firebase-config.json";
+import { Result } from "@/api/utils";
 
-const app = initializeApp(firebaseConfig);
+const { VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY } = import.meta.env;
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export function isLoggedIn() {
-  return !!auth.currentUser;
+if (!VITE_SUPABASE_URL || !VITE_SUPABASE_ANON_KEY) {
+  throw new Error("Supabase URL or Anon Key is not defined");
 }
 
+const supabase = createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY);
+
+// ✅ Checks if a user is logged in
+export function isLoggedIn() {
+  const user = supabase.auth.getUser();
+  return !!user;
+}
+
+// ✅ Fetch user info from the Supabase 'User' table
 export async function fetchUserInfo(): Promise<Result<IUserInfo | null>> {
-  const user = auth.currentUser;
-  if (!user) {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
     return { success: true, data: null };
   }
 
-  return fetchRequest(async () => {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (!userDoc.exists()) {
-      throw new Error("User document not found");
-    }
-    return userDoc.data() as IUserInfo;
-  });
+  const { data, error: userError } = await supabase
+    .from("User")
+    .select("*")
+    .eq("userid", user.id)
+    .single();
+
+  if (userError) return { success: false, error: userError };
+  return { success: true, data };
 }
 
+// ✅ Fetch a chat by chatId
 export async function fetchChat(chatId: number): Promise<Result<IChatInfo>> {
-  return fetchRequest(async () => {
-    const chatQuery = query(collection(db, "chats"), where("id", "==", chatId));
-    const querySnapshot = await getDocs(chatQuery);
-    if (querySnapshot.empty) {
-      throw new Error(`Chat with ID ${chatId} not found`);
-    }
-    return querySnapshot.docs[0].data() as IChatInfo;
-  });
+  const { data, error } = await supabase
+    .from("chat")
+    .select("*, message(*), messageSequence(*)") // include related messages if needed
+    .eq("id", chatId)
+    .single();
+
+  if (error) return { success: false, error };
+  return { success: true, data };
 }
 
+// ✅ Log in with Supabase auth
 export async function logIn(
   email: string,
   password: string,
 ): Promise<Result<IUserInfo>> {
-  return fetchRequest(async () => {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    const userDoc = await getDoc(doc(db, "users", cred.user.uid));
-    if (!userDoc.exists()) {
-      throw new Error("User data not found");
-    }
-    return userDoc.data() as IUserInfo;
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
   });
+
+  if (error) return { success: false, error };
+
+  // Fetch user info from `User` table
+  const { data: userInfo, error: userError } = await supabase
+    .from("User")
+    .select("*")
+    .eq("userid", data.user.id)
+    .single();
+
+  if (userError) return { success: false, error: userError };
+  return { success: true, data: userInfo };
 }
 
+// ✅ Log out
 export async function logOut(): Promise<Result<void>> {
-  try {
-    await signOut(auth);
-    return { success: true, data: undefined };
-  } catch (error) {
-    return { success: false, error: error as Error };
-  }
+  const { error } = await supabase.auth.signOut();
+
+  if (error) return { success: false, error };
+  return { success: true, data: undefined };
 }
-
-// Example: Update avatar
-// Uncomment and use this function if needed
-/*
-export async function changeAvatar(avatar: string): Promise<Result<IUserInfo>> {
-  return fetchRequest(async () => {
-    const user = auth.currentUser;
-    if (!user) throw new Error("User not logged in");
-
-    const userRef = doc(db, "users", user.uid);
-    await updateDoc(userRef, { avatar });
-
-    const updatedDoc = await getDoc(userRef);
-    return updatedDoc.data() as IUserInfo;
-  });
-}
-*/

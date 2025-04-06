@@ -1,7 +1,5 @@
 import { AxiosError } from "axios";
 
-export const API_URL = import.meta.env.VITE_API_URL;
-
 export type Result<T> =
   | { success: true; data: T }
   | { success: false; error: AxiosError | Error };

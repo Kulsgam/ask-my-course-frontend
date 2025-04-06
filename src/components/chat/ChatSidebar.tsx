@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAtom } from "jotai";
 import { userInfoAtom } from "@/state";
+import { useNavigate } from "react-router-dom";
 
 interface ChatSidebarProps {
   isOpen: boolean;
@@ -21,6 +22,8 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
       chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const navigate = useNavigate();
+
   return (
     <div
       className={`bg-background border-r transition-all duration-300 ${
@@ -29,7 +32,11 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
     >
       <div className="space-y-4 p-4">
         <div className="space-y-1">
-          <Button variant="outline" className="w-full justify-start">
+          <Button
+            variant="outline"
+            className="w-full justify-start"
+            onClick={() => navigate("/")}
+          >
             <MessageSquare className="mr-2 h-4 w-4" />
             New Chat
           </Button>
@@ -64,6 +71,9 @@ export default function ChatSidebar({ isOpen }: ChatSidebarProps) {
                   key={idx}
                   variant="ghost"
                   className="relative w-full justify-start overflow-hidden py-6 font-normal"
+                  onClick={() => {
+                    navigate(`/chat/${chat.id}`);
+                  }}
                 >
                   <div className="flex w-full flex-col items-start overflow-hidden text-left">
                     <div className="flex w-full justify-between overflow-hidden">

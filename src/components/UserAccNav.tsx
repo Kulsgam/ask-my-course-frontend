@@ -4,13 +4,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAtom } from "jotai";
 import { userInfoAtom } from "@/state";
+import { useNavigate } from "react-router-dom";
 
 export default function UserAccNav() {
   const [userInfo] = useAtom(userInfoAtom);
@@ -20,6 +19,8 @@ export default function UserAccNav() {
         avatar: userInfo.avatar,
       }
     : null;
+
+  const navigate = useNavigate();
 
   if (!user) {
     return (
@@ -39,7 +40,7 @@ export default function UserAccNav() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate("/login")}>
             <LogIn className="mr-2 h-4 w-4" />
             <span>Log in</span>
           </DropdownMenuItem>
@@ -60,16 +61,7 @@ export default function UserAccNav() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="select-none">
-          My Account
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <User className="mr-2 h-4 w-4" />
-          <span>Profile</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("/logout")}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>
