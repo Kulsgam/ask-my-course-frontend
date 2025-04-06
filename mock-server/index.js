@@ -38,7 +38,7 @@ const chatHistory = [
     lastMessage: "What topics should I focus on for the exam?",
     courseName: "Physics",
     university: "RMIT",
-    userId: 2,
+    userId: 1,
   },
 ];
 
