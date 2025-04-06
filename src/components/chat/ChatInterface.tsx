@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Send } from "lucide-react";
+import { Bot, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import ChatSidebar from "./ChatSidebar";
@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { createNewChatOnServer, sendQuery } from "@/api/user";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
   const [userInfo] = useAtom(userInfoAtom);
@@ -92,9 +93,11 @@ function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
 function ChatMessages({
   messages,
   tryTrigger = false,
+  loading,
 }: {
   messages: IMessage[] | null;
   tryTrigger: boolean;
+  loading: boolean;
 }) {
   const puns = [
     "Was that in a tute? Let me check",
@@ -112,13 +115,41 @@ function ChatMessages({
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
       {messages && messages.length > 0 ? (
-        messages.map((message, index) => (
-          // Ensure that each message has a unique key
-          <ChatMessage
-            key={`${message.role}-${message.timestamp}-${index}`}
-            message={message}
-          />
-        ))
+        <>
+          {messages.map((message, index) => (
+            // Ensure that each message has a unique key
+            <ChatMessage
+              key={`${message.role}-${message.timestamp}-${index}`}
+              message={message}
+            />
+          ))}
+
+          {loading && (
+            <div className={`flex justify-start`}>
+              <div className={`flex w-full gap-3`}>
+                <Avatar className={"bg-muted"}>
+                  {
+                    <AvatarFallback>
+                      <Bot className="h-4 w-4" />
+                    </AvatarFallback>
+                  }
+                </Avatar>
+                <div className="max-w-[80%] break-words">
+                  <div>
+                    <div
+                      className={`animate-pulse rounded-lg p-3 text-left whitespace-pre-wrap ${"bg-muted text-foreground"}`}
+                    >
+                      Loading...
+                    </div>
+                    <div
+                      className={`text-muted-foreground mt-1 w-full text-xs ${"pl-2 text-left"}`}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         <div className="flex h-full flex-col items-center justify-center space-y-4 text-center text-gray-500 select-none">
           <img src="/favicon.png" alt="Logo" width={100} height={100} />
@@ -186,6 +217,7 @@ function ChatInput({
 }
 
 export default function ChatInterface() {
+  const [loadingAI, setLoadingAI] = useState(false);
   const [tryTrigger, setTryTrigger] = useState(false);
   const [selectedCourse] = useAtom(selectedCourseAtom);
   const [chatInfo, setChatInfo] = useAtom(chatInfoAtom);
@@ -251,15 +283,7 @@ export default function ChatInterface() {
       }
 
       // Use the local variable (currentChatInfo) for sending the query.
-      const chatbot_res = await sendQuery(
-        currentChatInfo.id,
-        message,
-        isQueryAdded,
-      );
-
-      if (!chatbot_res.success) {
-        throw new Error("Failed to send message: " + chatbot_res.error.message);
-      }
+      setLoadingAI(true);
 
       // Safely generate new message IDs based on the last message (or start at 1)
       const lastMessageId =
@@ -274,6 +298,21 @@ export default function ChatInterface() {
         timestamp: new Date(),
       };
 
+      currentChatInfo.messages.push(userMessage);
+      setChatInfo({ ...currentChatInfo });
+
+      const chatbot_res = await sendQuery(
+        currentChatInfo.id,
+        message,
+        isQueryAdded,
+      );
+
+      if (!chatbot_res.success) {
+        currentChatInfo.messages.pop();
+        setChatInfo({ ...currentChatInfo });
+        throw new Error("Failed to send message: " + chatbot_res.error.message);
+      }
+
       const assistantMessage: IMessage = {
         id: lastMessageId + 2,
         content: chatbot_res.data,
@@ -282,10 +321,10 @@ export default function ChatInterface() {
       };
 
       // Update messages in the local copy and then update state.
-      currentChatInfo.messages.push(userMessage);
       currentChatInfo.messages.push(assistantMessage);
       // Create a new object for state update to trigger a re-render.
       setChatInfo({ ...currentChatInfo });
+      setLoadingAI(false);
 
       if (shouldNavigate) {
         navigate(`/chat/${currentChatInfo.id}`);
@@ -302,6 +341,7 @@ export default function ChatInterface() {
       <div className="flex h-full flex-1 flex-col">
         <ChatHeader courseName={courseName} toggleSidebar={toggleSidebar} />
         <ChatMessages
+          loading={loadingAI}
           messages={chatInfo?.messages ?? []}
           tryTrigger={tryTrigger}
         />
