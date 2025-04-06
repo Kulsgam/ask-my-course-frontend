@@ -204,8 +204,8 @@ export default function ChatInterface() {
     try {
       if (!chatInfo) {
         const response = await createNewChatOnServer(
-          university,
           courseName ?? "MATH",
+          university,
           message,
           userInfo?.uuid ?? "",
         );
