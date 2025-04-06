@@ -69,7 +69,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<HomeWrapper />} />
         <Route path="/chat/:chatId" element={<ChatWithIdWrapper />} />
-        <Route path="/" element={<Logout />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>

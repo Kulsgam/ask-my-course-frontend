@@ -65,8 +65,8 @@ function CourseSelector({ tryTrigger }: { tryTrigger: boolean }) {
         >
           Select a course
         </SelectItem>
-        {courses.map((course) => (
-          <SelectItem key={course} value={course}>
+        {courses.map((course, index) => (
+          <SelectItem key={`${course}-${index}`} value={course}>
             {course}
           </SelectItem>
         ))}

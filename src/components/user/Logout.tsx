@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import { logOut } from "@/api/user";
-import { useNavigate } from "react-router-dom";
 import { AlertTriangle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
 export default function Logout() {
-  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       const result = await logOut();
       if (result.success) {
-        navigate("/");
+        // change href instead of using navigate
+        window.location.href = "/";
       } else {
         setError(result.error.message || "Failed to logout. Please try again.");
       }
@@ -27,7 +26,13 @@ export default function Logout() {
         <AlertTitle>Logout Failed</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
-      <Button onClick={() => navigate("/")}>Continue to Home</Button>
+      <Button
+        onClick={() => {
+          window.location.href = "/";
+        }}
+      >
+        Continue to Home
+      </Button>
     </div>
   ) : (
     <div className="text-muted-foreground m-auto text-center text-sm">

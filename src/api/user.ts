@@ -13,8 +13,73 @@ const supabase = createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY);
 // ✅ Checks if a user is logged in
 export async function isLoggedIn() {
   const user = await supabase.auth.getUser();
-  console.log(user);
   return user.error === null;
+}
+
+async function getUser(userId: string) {
+  const { data: userData, error: userError } = await supabase
+    .from("User")
+    .select("*")
+    .eq("userid", userId)
+    .single();
+
+  if (userError) {
+    return null;
+  }
+
+  // Find the courses for the user
+  const { data: courses, error: courseError } = await supabase
+    .from("usercourse")
+    .select("*")
+    .eq("userid", userId)
+    .eq("university", userData?.university);
+
+  if (courseError) {
+    return null;
+  }
+
+  // Make it a course name list
+  const courseNames = courses.map((course) => course.coursename);
+
+  const { data: chatData, error: chatError } = await supabase
+    .from("chat")
+    .select(
+        `id,
+        coursename,
+        university,
+        userid,
+        message (
+            id,
+            content,
+            role,
+            timestamp
+        )`,
+    )
+    .in("coursename", courseNames)
+    .eq("university", userData.university);
+
+  if (chatError) {
+    return null;
+  }
+
+  const userInfo: IUserInfo = {
+    name: userData.name,
+    email: userData.email,
+    avatar: userData.avatar,
+    courses: courseNames,
+    university: userData.university,
+    chatHistory: chatData.map((chat) => ({
+      id: chat.id,
+      name: chat.coursename,
+      courseName: chat.coursename,
+      university: chat.university,
+      userId: chat.userid,
+      lastMessage: chat.message[chat.message.length - 1]?.content || "",
+      lastRole: chat.message[chat.message.length - 1]?.role || "user",
+    })),
+  };
+
+  return userInfo;
 }
 
 // ✅ Fetch user info from the Supabase 'User' table
@@ -28,14 +93,12 @@ export async function fetchUserInfo(): Promise<Result<IUserInfo | null>> {
     return { success: true, data: null };
   }
 
-  const { data, error: userError } = await supabase
-    .from("User")
-    .select("*")
-    .eq("userid", user.id)
-    .single();
+  const userInfo = await getUser(user.id);
+  if (!userInfo) {
+    return { success: false, error: new Error("Failed to fetch user info") };
+  }
 
-  if (userError) return { success: false, error: userError };
-  return { success: true, data };
+  return { success: true, data: userInfo };
 }
 
 // ✅ Fetch a chat by chatId
@@ -62,14 +125,11 @@ export async function logIn(
 
   if (error) return { success: false, error };
 
-  // Fetch user info from `User` table
-  const { data: userInfo, error: userError } = await supabase
-    .from("User")
-    .select("*")
-    .eq("userid", data.user.id)
-    .single();
+  const userInfo = await getUser(data.user.id);
+  if (!userInfo) {
+    return { success: false, error: new Error("Failed to fetch user info") };
+  }
 
-  if (userError) return { success: false, error: userError };
   return { success: true, data: userInfo };
 }
 
