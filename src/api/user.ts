@@ -44,8 +44,9 @@ async function getUser(userId: string) {
   const { data: chatData, error: chatError } = await supabase
     .from("chat")
     .select(
-        `id,
+      `id,
         coursename,
+        name,
         university,
         userid,
         message (
@@ -70,7 +71,7 @@ async function getUser(userId: string) {
     university: userData.university,
     chatHistory: chatData.map((chat) => ({
       id: chat.id,
-      name: chat.coursename,
+      name: chat.name,
       courseName: chat.coursename,
       university: chat.university,
       userId: chat.userid,
