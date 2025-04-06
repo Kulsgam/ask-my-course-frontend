@@ -219,7 +219,7 @@ function ChatInput({
 }
 
 export default function ChatInterface() {
-  const messagesRef = useRef<HTMLDivElement>();
+  const messagesRef = useRef<HTMLDivElement>(null);
   const [loadingAI, setLoadingAI] = useState(false);
   const [tryTrigger, setTryTrigger] = useState(false);
   const [selectedCourse] = useAtom(selectedCourseAtom);
@@ -294,15 +294,17 @@ export default function ChatInterface() {
           ? currentChatInfo.messages[currentChatInfo.messages.length - 1].id
           : 0;
 
-      const userMessage: IMessage = {
-        id: lastMessageId + 1,
-        content: message,
-        role: Role.user,
-        timestamp: new Date(),
-      };
+      if (!shouldNavigate) {
+        const userMessage: IMessage = {
+          id: lastMessageId + 1,
+          content: message,
+          role: Role.user,
+          timestamp: new Date(),
+        };
 
-      currentChatInfo.messages.push(userMessage);
-      setChatInfo({ ...currentChatInfo });
+        currentChatInfo.messages.push(userMessage);
+        setChatInfo({ ...currentChatInfo });
+      }
 
       const chatbot_res = await sendQuery(
         currentChatInfo.id,
