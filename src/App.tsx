@@ -12,6 +12,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import { fetchChat } from "@/api/user";
+import Login from "@/components/user/Login";
+import Logout from "@/components/user/Logout";
 
 function ChatWithIdWrapper() {
   const { chatId } = useParams();
@@ -45,10 +47,6 @@ function HomeWrapper() {
   return <ChatInterface />;
 }
 
-function Login() {
-  return <div className="p-4 text-center">Login Page (Coming Soon)</div>;
-}
-
 export default function App() {
   const [, setUserInfo] = useAtom(userInfoAtom);
   const navigate = useNavigate();
@@ -73,6 +71,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<HomeWrapper />} />
         <Route path="/chat/:chatId" element={<ChatWithIdWrapper />} />
+        <Route path="/" element={<Logout />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
