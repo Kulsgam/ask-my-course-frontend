@@ -114,7 +114,10 @@ function ChatMessages({
       {messages && messages.length > 0 ? (
         messages.map((message, index) => (
           // Ensure that each message has a unique key
-          <ChatMessage key={`${message.role}-${message.timestamp}-${index}`} message={message} />
+          <ChatMessage
+            key={`${message.role}-${message.timestamp}-${index}`}
+            message={message}
+          />
         ))
       ) : (
         <div className="flex h-full flex-col items-center justify-center space-y-4 text-center text-gray-500 select-none">
@@ -130,9 +133,11 @@ function ChatMessages({
 }
 
 function ChatInput({
+  isNewChat,
   handleSendMessage,
   setTryTrigger,
 }: {
+  isNewChat: boolean;
   handleSendMessage: (inputValue: string) => void;
   setTryTrigger: (value: boolean) => void;
 }) {
@@ -144,7 +149,7 @@ function ChatInput({
     if (!inputValue.trim()) {
       return;
     }
-    if (selectedCourse === "__none__" || !selectedCourse) {
+    if (isNewChat && (selectedCourse === "__none__" || !selectedCourse)) {
       setTryTrigger(true);
       setTimeout(() => {
         setTryTrigger(false);
@@ -284,6 +289,7 @@ export default function ChatInterface() {
         />
         <Toaster />
         <ChatInput
+          isNewChat={chatInfo === null || chatInfo.messages.length === 0}
           handleSendMessage={handleSendMessage}
           setTryTrigger={setTryTrigger}
         />
