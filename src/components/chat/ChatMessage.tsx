@@ -1,15 +1,21 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bot, User } from "lucide-react";
 import { IChatMessageProps } from "@/components/chat/types";
 import { Role } from "@/state";
+import { useAtom } from "jotai";
+import { userInfoAtom } from "@/state";
 
 export default function ChatMessage({ message }: IChatMessageProps) {
   const isUser = message.role === Role.user;
+  const [userInfo] = useAtom(userInfoAtom);
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div className={`flex w-full gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
         <Avatar className={isUser ? "bg-primary" : "bg-muted"}>
+          {userInfo?.avatar && isUser && (
+            <AvatarImage src={userInfo.avatar} alt="User" />
+          )}
           <AvatarFallback>
             {isUser ? (
               <User className="h-4 w-4" />
@@ -21,7 +27,7 @@ export default function ChatMessage({ message }: IChatMessageProps) {
         <div className="max-w-[80%] break-words">
           <div>
             <div
-              className={`rounded-lg p-3 text-left whitespace-pre-wrap ${isUser ? "dark:bg-primary bg-zinc-300 dark:text-primary-foreground text-black" : "bg-muted text-foreground"}`}
+              className={`rounded-lg p-3 text-left whitespace-pre-wrap ${isUser ? "dark:bg-primary dark:text-primary-foreground bg-zinc-300 text-black" : "bg-muted text-foreground"}`}
             >
               {message.content}
             </div>

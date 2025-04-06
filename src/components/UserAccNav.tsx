@@ -53,7 +53,7 @@ export default function UserAccNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage alt="User" />
+            {user?.avatar && <AvatarImage alt="User" src={user.avatar} />}
             <AvatarFallback>
               <User className="h-6 w-6" />
             </AvatarFallback>
