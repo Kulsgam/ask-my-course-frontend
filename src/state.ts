@@ -22,6 +22,7 @@ export interface ICourse {
 
 interface IChatHistoryChat extends Omit<IChatInfo, "messages"> {
   lastRole: Role;
+  lastMessageTimestamp: Date;
   lastMessage: string;
 }
 

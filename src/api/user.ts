@@ -79,6 +79,7 @@ async function getUser(userId: string) {
       courseName: chat.coursename,
       university: chat.university,
       userId: chat.userid,
+      lastMessageTimestamp: new Date(chat.message[chat.message.length - 1].timestamp),
       lastMessage: chat.message[chat.message.length - 1]?.content || "",
       lastRole: chat.message[chat.message.length - 1]?.role || "user",
     })),
