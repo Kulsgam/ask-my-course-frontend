@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Bot, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -94,10 +94,12 @@ function ChatMessages({
   messages,
   tryTrigger = false,
   loading,
+  ref,
 }: {
   messages: IMessage[] | null;
   tryTrigger: boolean;
   loading: boolean;
+  ref: any;
 }) {
   const puns = [
     "Was that in a tute? Let me check",
@@ -113,7 +115,7 @@ function ChatMessages({
   );
 
   return (
-    <div className="flex-1 space-y-4 overflow-y-auto p-4">
+    <div ref={ref} className="flex-1 space-y-4 overflow-y-auto p-4">
       {messages && messages.length > 0 ? (
         <>
           {messages.map((message, index) => (
@@ -217,6 +219,7 @@ function ChatInput({
 }
 
 export default function ChatInterface() {
+  const messagesRef = useRef<HTMLDivElement>();
   const [loadingAI, setLoadingAI] = useState(false);
   const [tryTrigger, setTryTrigger] = useState(false);
   const [selectedCourse] = useAtom(selectedCourseAtom);
@@ -335,12 +338,19 @@ export default function ChatInterface() {
     }
   };
 
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [chatInfo]);
+
   return (
     <>
       <ChatSidebar isOpen={isSidebarOpen} />
       <div className="flex h-full flex-1 flex-col">
         <ChatHeader courseName={courseName} toggleSidebar={toggleSidebar} />
         <ChatMessages
+          ref={messagesRef}
           loading={loadingAI}
           messages={chatInfo?.messages ?? []}
           tryTrigger={tryTrigger}
