@@ -112,9 +112,9 @@ function ChatMessages({
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
       {messages && messages.length > 0 ? (
-        messages.map((message) => (
+        messages.map((message, index) => (
           // Ensure that each message has a unique key
-          <ChatMessage key={message.id ?? Math.random()} message={message} />
+          <ChatMessage key={`${message.role}-${message.timestamp}-${index}`} message={message} />
         ))
       ) : (
         <div className="flex h-full flex-col items-center justify-center space-y-4 text-center text-gray-500 select-none">
