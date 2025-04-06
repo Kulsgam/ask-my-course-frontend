@@ -21,12 +21,12 @@ function ChatWithIdWrapper() {
   const navigate = useNavigate();
 
   const chatIdNumber = Number(chatId);
-
-  if (!chatId || isNaN(chatIdNumber) || chatIdNumber <= 0) {
-    return <Navigate to="/" />;
-  }
+  const isInvalidChatId = !chatId || isNaN(chatIdNumber) || chatIdNumber <= 0;
 
   useEffect(() => {
+    if (isInvalidChatId) {
+      return;
+    }
     (async function () {
       const result = await fetchChat(chatIdNumber);
       if (result.success) {
@@ -39,6 +39,10 @@ function ChatWithIdWrapper() {
       }
     })();
   }, [chatId]);
+
+  if (isInvalidChatId) {
+    return <Navigate to="/" />;
+  }
 
   return <ChatInterface />;
 }

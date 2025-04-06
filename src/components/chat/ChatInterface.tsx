@@ -189,7 +189,7 @@ export default function ChatInterface() {
   const [tryTrigger, setTryTrigger] = useState(false);
   const [selectedCourse] = useAtom(selectedCourseAtom);
   const [chatInfo, setChatInfo] = useAtom(chatInfoAtom);
-  const [userInfo] = useAtom(userInfoAtom);
+  const [userInfo, setUserInfo] = useAtom(userInfoAtom);
   const university = userInfo?.university ?? "RMIT";
   const navigate = useNavigate();
 
@@ -230,6 +230,24 @@ export default function ChatInterface() {
         shouldNavigate = true; // we are creating a new chat
         currentChatInfo = _chatInfo;
         setChatInfo(_chatInfo);
+        setUserInfo((info) => {
+          if (info === null) return null;
+          info.chatHistory.push({
+            id: _chatInfo.id,
+            name: _chatInfo.name,
+            courseName: _chatInfo.courseName,
+            university: _chatInfo.university,
+            userId: _chatInfo.userId,
+            lastMessageTimestamp: new Date(
+              _chatInfo.messages[_chatInfo.messages.length - 1]?.timestamp,
+            ),
+            lastMessage:
+              _chatInfo.messages[_chatInfo.messages.length - 1]?.content || "",
+            lastRole:
+              _chatInfo.messages[_chatInfo.messages.length - 1]?.role || "user",
+          });
+          return info;
+        });
       }
 
       // Use the local variable (currentChatInfo) for sending the query.
